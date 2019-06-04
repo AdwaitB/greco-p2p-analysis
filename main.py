@@ -48,11 +48,13 @@ def get_clean_data_staging_jobs(s):
         cache[qbox] = {}
 
     # Now clean the redundant datasets
-    data_staging_all = deepcopy(data_staging.heap)
+    data_staging_all = Heap(deepcopy(data_staging.heap))
 
     data_staging.clear()
 
-    for ds_job in data_staging_all:
+    while not data_staging_all.empty():
+        ds_job = data_staging_all.pop()
+
         qbox = ds_job[2]
         data_id = ds_job[3]
 
@@ -80,12 +82,81 @@ def worst_case_analysis(queue, ses):
     return total_size, total_time
 
 
-session = init(DATA_FOLDERS[0])
+def p2p_analysis(queue, ses):
+    jobs = Heap([])
 
-data_staging_clean = get_clean_data_staging_jobs(session)
-print("Data staging jobs for analysis : {}".format(len(data_staging_clean.heap)))
+    staging_clean = deepcopy(queue.heap)
+    for staging_clean_job in staging_clean:
+        jobs.push(staging_clean_job + ("REQ",))
 
-session[1].scale_datasets(1)
+    # Stores the network links
+    links = ses[0].get_links(ses[1])
 
-worst_case = worst_case_analysis(data_staging_clean, session)
-print(worst_case)
+    total_size = 0
+    total_time = 0
+
+    # Stores the location of the datasets in the system
+    dataset_loc = ses[1].get_dataset_locs()
+
+    while not jobs.empty():
+        job = jobs.pop()
+
+        # Check job type
+        # For POP, pop transfers from that link
+        if job[4] == 'POP':
+            links[(job[2], job[3])].pop()
+        # For REQ type, check if dataset is present in system or not
+        else:
+            qbox = job[2]
+            data_id = job[3]
+
+            if qbox in dataset_loc[data_id]:
+                continue
+
+            # If the dataset is not present in the system
+            if len(dataset_loc[data_id]) == 0:
+                # Create a random source
+                src = ses[0].get_random_qbox()
+                while src == qbox:
+                    src = ses[0].get_random_qbox()
+            else:
+                # Find sources
+                sources = dataset_loc[data_id]
+
+                # Get nearest Source
+                src = sources[0]
+                min_time = links[(src, qbox)].get_time(data_id, job[0])
+
+                for source in sources:
+                    new_time = links[(source, qbox)].get_time(data_id, job[0])
+
+                    if new_time < min_time:
+                        src = source
+                        min_time = new_time
+
+            # Transfer from that link
+            tracking, transfer_time = links[(src, qbox)].push(data_id, job[0])
+
+            # Add a POP job for that link
+            jobs.push(tracking)
+
+            # Update the sources
+            dataset_loc[data_id].append(qbox)
+            total_size += ses[1].get_size(data_id)
+            total_time += transfer_time
+    return total_size, total_time
+
+
+def main():
+    session = init(DATA_FOLDERS[0])
+
+    data_staging_clean = get_clean_data_staging_jobs(session)
+
+    session[1].scale_datasets(1)
+
+    worst_case = worst_case_analysis(data_staging_clean, session)
+    print(worst_case)
+    p2p = p2p_analysis(data_staging_clean, session)
+    print(p2p)
+
+main()

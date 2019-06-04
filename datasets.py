@@ -20,3 +20,9 @@ class Dataset:
 
     def get_size(self, dataset_id):
         return self.data[dataset_id]*self.scale
+
+    def get_dataset_locs(self):
+        ret = {}
+        for dataset in self.data:
+            ret[dataset] = []
+        return ret

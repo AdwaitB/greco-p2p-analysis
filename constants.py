@@ -16,6 +16,10 @@ For the same geo location
 For different geo location
 1. P2P BW = BW_P2P_NOT_LOCAL * CEPH_AVERAGE_BW
 2. P2P Lat = 1 * CEPH_AVERAGE_LAT
+
+For every link, equal bandwidth is given to every transfer.
+But the time taken for this and the time taken for stacked, but independent queries is same.
+So it is implemented in the 2nd way
 """
 LATENCY_P2P_LOCAL = 0.3
 BW_P2P_NOT_LOCAL = 0.5

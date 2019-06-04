@@ -1,4 +1,7 @@
 import json
+from random import choice as rc
+
+from link import *
 from constants import *
 
 
@@ -79,16 +82,15 @@ class Infra:
         speed, lat = self.ceph_net[qbox]
         return lat + (size/(speed*self.mb))
 
-    def get_time_for_p2p_transfer(self, qbox_1, qbox_2, size, overload=1):
+    def get_time_for_p2p_transfer(self, link, size, overload=1):
         """
         Gets the time required for p2p transfer fro qbox1 to qbox2
-        :param qbox_1: qbox1
-        :param qbox_2: qbox2
+        :param link: (qbox1, qbox2) link
         :param size: size of the dataset to transfer
         :param overload: number of transfers happenning on the links
-        :return:
+        :return: Time required for transfer
         """
-        if self.qbox_loc[qbox_1] == self.qbox_loc[qbox_2]:
+        if self.qbox_loc[link[0]] == self.qbox_loc[link[1]]:
             bw = self.mean_wan_bw
             lat = self.mean_wan_lat*LATENCY_P2P_LOCAL
             return lat + ((size*overload)/(bw*self.mb))
@@ -97,3 +99,14 @@ class Infra:
             lat = self.mean_wan_lat
             return lat + ((size*overload)/(bw*self.mb))
         pass
+
+    def get_links(self, datasets):
+        links = {}
+        for qbox1 in self.qboxes:
+            for qbox2 in self.qboxes:
+                if qbox1 != qbox2:
+                    links[(qbox1, qbox2)] = Link(self, datasets, (qbox1, qbox2))
+        return links
+
+    def get_random_qbox(self):
+        return rc(self.qboxes)
