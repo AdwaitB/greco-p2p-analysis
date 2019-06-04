@@ -95,9 +95,11 @@ def p2p_analysis(queue, ses):
 
     # Stores the location of the datasets in the system
     dataset_loc = ses[1].get_dataset_locs()
+    traces = []
 
     while not jobs.empty():
         job = jobs.pop()
+        traces.append(job)
 
         # Check job type
         # For POP, pop transfers from that link
@@ -142,7 +144,7 @@ def p2p_analysis(queue, ses):
 
             total_size += ses[1].get_size(data_id)
             total_time += transfer_time
-    return total_size, total_time
+    return (total_size, total_time), traces
 
 
 def main():
@@ -157,7 +159,9 @@ def main():
             session[1].scale_datasets(scaling)
 
             worst_case = worst_case_analysis(data_staging_clean, session)
-            p2p = p2p_analysis(data_staging_clean, session)
+            p2p, traces = p2p_analysis(data_staging_clean, session)
+
+            write_data({"traces": traces}, data, 'traces.json')
 
             print("{} : {} , {}".format(
                 scaling,
