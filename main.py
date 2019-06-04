@@ -76,7 +76,6 @@ def worst_case_analysis(queue, ses):
         size = ses[1].get_size(data_id)
 
         total_size = total_size + size
-        total_size = total_size + size
         total_time = total_time + ses[0].get_time_for_ceph_transfer(qbox, size)
 
     return total_size, total_time
