@@ -85,11 +85,15 @@ class Infra:
     def get_time_for_p2p_transfer(self, link, size, overload=1):
         """
         Gets the time required for p2p transfer fro qbox1 to qbox2
+        Return 0 if the qbox are same
         :param link: (qbox1, qbox2) link
         :param size: size of the dataset to transfer
         :param overload: number of transfers happenning on the links
         :return: Time required for transfer
         """
+        if link[0] == link[1]:
+            return 0
+
         if self.qbox_loc[link[0]] == self.qbox_loc[link[1]]:
             bw = self.mean_wan_bw
             lat = self.mean_wan_lat*LATENCY_P2P_LOCAL
@@ -104,8 +108,7 @@ class Infra:
         links = {}
         for qbox1 in self.qboxes:
             for qbox2 in self.qboxes:
-                if qbox1 != qbox2:
-                    links[(qbox1, qbox2)] = Link(self, datasets, (qbox1, qbox2))
+                links[(qbox1, qbox2)] = Link(self, datasets, (qbox1, qbox2))
         return links
 
     def get_random_qbox(self):

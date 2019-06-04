@@ -1,3 +1,4 @@
+from random import randint
 
 
 class Link:
@@ -25,7 +26,8 @@ class Link:
         time = self.infra.get_time_for_p2p_transfer(self.link, self.dataset.get_size(data_id))
         self.free_at = self.free_at + time
 
-        return (self.free_at, data_id, self.link[0], self.link[1], 'POP'), time
+        # Second element is always random to prevent collisions
+        return (self.free_at, randint(0, 1000000000), self.link[0], self.link[1], 'POP'), time
 
     def get_time(self, data_id, now):
         """

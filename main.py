@@ -115,8 +115,6 @@ def p2p_analysis(queue, ses):
             if len(dataset_loc[data_id]) == 0:
                 # Create a random source
                 src = ses[0].get_random_qbox()
-                while src == qbox:
-                    src = ses[0].get_random_qbox()
             else:
                 # Find sources
                 sources = dataset_loc[data_id]
