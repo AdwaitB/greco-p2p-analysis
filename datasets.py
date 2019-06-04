@@ -24,5 +24,5 @@ class Dataset:
     def get_dataset_locs(self):
         ret = {}
         for dataset in self.data:
-            ret[dataset] = []
+            ret[dataset] = set()
         return ret

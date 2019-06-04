@@ -1,5 +1,4 @@
 from datasets import *
-from constants import *
 from utils import *
 from workload import *
 from infra import *
@@ -112,7 +111,7 @@ def p2p_analysis(queue, ses):
             if qbox in dataset_loc[data_id]:
                 continue
 
-            # If the dataset is not present in the system
+            # If the dataset is not present in the system, find the source
             if len(dataset_loc[data_id]) == 0:
                 # Create a random source
                 src = ses[0].get_random_qbox()
@@ -123,7 +122,7 @@ def p2p_analysis(queue, ses):
                 sources = dataset_loc[data_id]
 
                 # Get nearest Source
-                src = sources[0]
+                src = list(dataset_loc[data_id])[0]
                 min_time = links[(src, qbox)].get_time(data_id, job[0])
 
                 for source in sources:
@@ -140,7 +139,9 @@ def p2p_analysis(queue, ses):
             jobs.push(tracking)
 
             # Update the sources
-            dataset_loc[data_id].append(qbox)
+            dataset_loc[data_id].add(src)
+            dataset_loc[data_id].add(qbox)
+
             total_size += ses[1].get_size(data_id)
             total_time += transfer_time
     return total_size, total_time
@@ -167,5 +168,6 @@ def main():
             ))
 
         print("")
+
 
 main()
