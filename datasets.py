@@ -19,4 +19,4 @@ class Dataset:
         self.scale = val
 
     def get_size(self, dataset_id):
-        return self.data[dataset_id]
+        return self.data[dataset_id]*self.scale

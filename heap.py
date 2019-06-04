@@ -20,3 +20,6 @@ class Heap:
 
     def empty(self):
         return len(self.heap) == 0
+
+    def clear(self):
+        self.heap.clear()

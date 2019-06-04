@@ -18,7 +18,7 @@ class Workload:
             qbox = infra.get_qbox_by_mobo_id(qmobo)
             if qbox == -1:
                 continue
-            if input_file['profiles'][job['profile']]['datasets'] == None:
+            if input_file['profiles'][job['profile']]['datasets'] is None:
                 continue
 
             self.raw_workloads[job_id] = {}
@@ -26,4 +26,3 @@ class Workload:
             self.raw_workloads[job_id]['end'] = job['real_finish_time']
             self.raw_workloads[job_id]['qbox'] = qbox
             self.raw_workloads[job_id]['datasets'] = input_file['profiles'][job['profile']]['datasets']
-

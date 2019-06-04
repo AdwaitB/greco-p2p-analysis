@@ -1,7 +1,10 @@
 import json
+from constants import *
 
 
 class Infra:
+    mb = 1000000
+
     def __init__(self, folder):
         # Read the file
         with open(folder + '/platform.json', 'r') as file:
@@ -48,6 +51,20 @@ class Infra:
             # Extract site
             self.qbox_loc[qbox['id']] = qbox['site']
 
+        # Find average bw, latencies
+        self.mean_wan_bw = 0
+        self.mean_wan_lat = 0
+
+        for qbox in self.ceph_net:
+            bw, lat = self.ceph_net[qbox]
+            self.mean_wan_bw = self.mean_wan_bw + bw
+            self.mean_wan_lat = self.mean_wan_lat + lat
+
+        self.mean_wan_bw = self.mean_wan_bw/len(self.ceph_net)
+        self.mean_wan_lat = self.mean_wan_lat/len(self.ceph_net)
+
+        # TODO: Implement seperate latencies for every site
+
     def get_qbox_by_mobo_id(self, mobo_id):
         if mobo_id not in self.id_to_mobos:
             return -1
@@ -57,8 +74,26 @@ class Infra:
             return -1
         return self.qmobo_to_qbox[qmobo]
 
-    def get_time_for_data_transfer(self, qbox, size):
+    def get_time_for_ceph_transfer(self, qbox, size):
         # Size is in Bytes
         speed, lat = self.ceph_net[qbox]
-        return lat + (size/(speed*1000000))
+        return lat + (size/(speed*self.mb))
 
+    def get_time_for_p2p_transfer(self, qbox_1, qbox_2, size, overload=1):
+        """
+        Gets the time required for p2p transfer fro qbox1 to qbox2
+        :param qbox_1: qbox1
+        :param qbox_2: qbox2
+        :param size: size of the dataset to transfer
+        :param overload: number of transfers happenning on the links
+        :return:
+        """
+        if self.qbox_loc[qbox_1] == self.qbox_loc[qbox_2]:
+            bw = self.mean_wan_bw
+            lat = self.mean_wan_lat*LATENCY_P2P_LOCAL
+            return lat + ((size*overload)/(bw*self.mb))
+        else:
+            bw = self.mean_wan_bw*BW_P2P_NOT_LOCAL
+            lat = self.mean_wan_lat
+            return lat + ((size*overload)/(bw*self.mb))
+        pass
