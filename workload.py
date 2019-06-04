@@ -26,3 +26,10 @@ class Workload:
             self.raw_workloads[job_id]['end'] = job['real_finish_time']
             self.raw_workloads[job_id]['qbox'] = qbox
             self.raw_workloads[job_id]['datasets'] = input_file['profiles'][job['profile']]['datasets']
+
+    def add_random_datasets_to_job(self, dataset, count):
+        for job_id in self.raw_workloads:
+            for i in range(count):
+                data_id = dataset.get_random_dataset()
+                if data_id not in self.raw_workloads[job_id]:
+                    self.raw_workloads[job_id]['datasets'].append(data_id)

@@ -1,4 +1,5 @@
 import json
+import random
 
 
 class Dataset:
@@ -26,3 +27,6 @@ class Dataset:
         for dataset in self.data:
             ret[dataset] = set()
         return ret
+
+    def get_random_dataset(self):
+        return random.choice(list(self.data.keys()))

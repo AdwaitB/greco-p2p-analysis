@@ -6,6 +6,8 @@ from heap import *
 
 from copy import deepcopy
 
+import pandas as pd
+
 
 def init(folder):
     i = Infra(folder)
@@ -148,28 +150,45 @@ def p2p_analysis(queue, ses):
 
 
 def main():
+    df = pd.DataFrame(columns=['data', 'job_scaling', 'data_scaling',
+                               'transfer_size_worst', 'transfer_time_worst',
+                               'transfer_size_opt', 'transfer_time_opt',
+                               'transfer_size_improvement', 'transfer_time_improvement'])
     for index in DATA_FOLDERS:
         data = DATA_FOLDERS[index]
-        print(data + " ================================")
-        session = init(data)
 
-        data_staging_clean = get_clean_data_staging_jobs(session, data)
+        print("{}".format(data))
 
-        for scaling in (1, 2, 4, 8, 16, 32, 64, 128):
-            session[1].scale_datasets(scaling)
+        for job_scale in JOBS_SCALE:
+            for data_scale in DATA_SIZE_SCALING:
 
-            worst_case = worst_case_analysis(data_staging_clean, session)
-            p2p, traces = p2p_analysis(data_staging_clean, session)
+                session = init(data)
 
-            write_data({"traces": traces}, data, 'traces.json')
+                # Add random datasets to jobs
+                session[2].add_random_datasets_to_job(session[1], job_scale)
 
-            print("{} : {} , {}".format(
-                scaling,
-                get_percent(worst_case[0], p2p[0]),
-                get_percent(worst_case[1], p2p[1])
-            ))
+                # Clean the entries for cached datasets
+                data_staging_clean = get_clean_data_staging_jobs(session, data)
 
-        print("")
+                # Scale the datasets
+                session[1].scale_datasets(data_scale)
+
+                # Get the worst_case and the p2p execution
+                worst_case = worst_case_analysis(data_staging_clean, session)
+                p2p, traces = p2p_analysis(data_staging_clean, session)
+
+                entry = {
+                    'data' : data,
+                    'job_scaling': job_scale,
+                    'data_scaling': data_scale,
+                    'transfer_size_worst': worst_case[0],
+                    'transfer_time_worst': worst_case[1],
+                    'transfer_size_opt': p2p[0],
+                    'transfer_time_opt': p2p[1]
+                }
+
+                df = df.append(entry, ignore_index=True)
+        df.to_csv('output.csv')
 
 
 main()
