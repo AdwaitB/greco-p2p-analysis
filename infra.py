@@ -1,5 +1,6 @@
 import json
 from random import choice as rc
+import random
 
 from link import *
 from constants import *
@@ -9,6 +10,7 @@ class Infra:
     mb = 1000000
 
     def __init__(self, folder):
+        random.seed(1)
         # Read the file
         with open(folder + '/platform.json', 'r') as file:
             input_file = json.load(file)
