@@ -12,13 +12,13 @@ def init(folder):
     d = Dataset(folder)
     w = Workload(folder, i)
 
-    write_data(d.data, DATA_FOLDERS[0], 'datasets_new.json')
-    write_data(w.raw_workloads, DATA_FOLDERS[0], 'workload_new.json')
+    write_data(d.data, folder, 'datasets_new.json')
+    write_data(w.raw_workloads, folder, 'workload_new.json')
 
     return i, d, w
 
 
-def get_clean_data_staging_jobs(s):
+def get_clean_data_staging_jobs(s, folder):
     infra, datasets, workloads = s
 
     # Heap to store the data staging jobs
@@ -37,7 +37,7 @@ def get_clean_data_staging_jobs(s):
 
             data_staging.push((time, count, job['qbox'], data_id))
 
-    write_data({'data_staging': data_staging.heap}, DATA_FOLDERS[0], 'data_staging.json')
+    write_data({'data_staging': data_staging.heap}, folder, 'data_staging.json')
 
     # Initialize the cache
     cache = {}
@@ -61,7 +61,7 @@ def get_clean_data_staging_jobs(s):
             data_staging.push(ds_job)
             cache[qbox][data_id] = data_id[0]
 
-    write_data({'data_staging_clean': data_staging.heap}, DATA_FOLDERS[0], 'data_staging_clean.json')
+    write_data({'data_staging_clean': data_staging.heap}, folder, 'data_staging_clean.json')
 
     return data_staging
 
@@ -151,7 +151,7 @@ def main():
         print(data + " ================================")
         session = init(data)
 
-        data_staging_clean = get_clean_data_staging_jobs(session)
+        data_staging_clean = get_clean_data_staging_jobs(session, data)
 
         for scaling in (1, 2, 4, 8, 16, 32, 64, 128):
             session[1].scale_datasets(scaling)
