@@ -29,7 +29,7 @@ class Workload:
 
     def add_random_datasets_to_job(self, dataset, count):
         for job_id in self.raw_workloads:
-            for i in range(count):
-                data_id = dataset.get_random_dataset()
+            data_ids = dataset.get_n_random_datasets(count)
+            for data_id in data_ids:
                 if data_id not in self.raw_workloads[job_id]:
                     self.raw_workloads[job_id]['datasets'].append(data_id)

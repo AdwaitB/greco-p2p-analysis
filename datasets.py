@@ -1,5 +1,5 @@
 import json
-import random
+import numpy as np
 
 
 class Dataset:
@@ -28,5 +28,5 @@ class Dataset:
             ret[dataset] = set()
         return ret
 
-    def get_random_dataset(self):
-        return random.choice(list(self.data.keys()))
+    def get_n_random_datasets(self, n):
+        return np.random.choice(list(self.data.keys()), n)
