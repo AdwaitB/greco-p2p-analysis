@@ -188,7 +188,7 @@ def main():
                 }
 
                 df = df.append(entry, ignore_index=True)
-        df.to_csv('output.csv')
+    df.to_csv('output.csv')
 
 
 main()
