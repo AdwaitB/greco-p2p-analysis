@@ -148,15 +148,25 @@ def p2p_analysis(queue, ses):
 
 
 def main():
-    session = init(DATA_FOLDERS[0])
+    for index in DATA_FOLDERS:
+        data = DATA_FOLDERS[index]
+        print(data + " ================================")
+        session = init(data)
 
-    data_staging_clean = get_clean_data_staging_jobs(session)
+        data_staging_clean = get_clean_data_staging_jobs(session)
 
-    session[1].scale_datasets(1)
+        for scaling in (1, 2, 4, 8, 16, 32, 64, 128):
+            session[1].scale_datasets(scaling)
 
-    worst_case = worst_case_analysis(data_staging_clean, session)
-    print(worst_case)
-    p2p = p2p_analysis(data_staging_clean, session)
-    print(p2p)
+            worst_case = worst_case_analysis(data_staging_clean, session)
+            p2p = p2p_analysis(data_staging_clean, session)
+
+            print("{} : {} , {}".format(
+                scaling,
+                get_percent(worst_case[0], p2p[0]),
+                get_percent(worst_case[1], p2p[1])
+            ))
+
+        print("")
 
 main()
