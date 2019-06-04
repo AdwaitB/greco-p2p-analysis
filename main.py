@@ -184,7 +184,9 @@ def main():
                     'transfer_size_worst': worst_case[0],
                     'transfer_time_worst': worst_case[1],
                     'transfer_size_opt': p2p[0],
-                    'transfer_time_opt': p2p[1]
+                    'transfer_time_opt': p2p[1],
+                    'transfer_size_improvement': get_percent(worst_case[0], p2p[0]),
+                    'transfer_time_improvement': get_percent(worst_case[1], p2p[1])
                 }
 
                 df = df.append(entry, ignore_index=True)
