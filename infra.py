@@ -30,12 +30,19 @@ class Infra:
         # Extract qbox locations
         self.qbox_loc = {}
 
+        # List of qboxes
+        self.qboxes = []
+
         for qbox in self.qboxes_tree:
+            self.qboxes.append(qbox["id"])
+
+            # Bandwidth always in MBps
             bw = int(qbox['wan_bw'][:-4])
             if qbox['wan_bw'][-4] == 'G':
                 bw = bw*1000
+            bw = bw/8
 
-            # Extract latency
+            # Extract latency in ms
             self.ceph_net[qbox['id']] = (bw, int(qbox['wan_lat'][:-2]))
 
             # Extract site
@@ -49,3 +56,9 @@ class Infra:
         if qmobo not in self.qmobo_to_qbox:
             return -1
         return self.qmobo_to_qbox[qmobo]
+
+    def get_time_for_data_transfer(self, qbox, size):
+        # Size is in Bytes
+        speed, lat = self.ceph_net[qbox]
+        return lat + (size/(speed*1000000))
+

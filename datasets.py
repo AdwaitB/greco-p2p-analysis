@@ -2,9 +2,9 @@ import json
 
 
 class Dataset:
-    @staticmethod
-    def read_datasets(folder):
-        ret = {}
+    def __init__(self, folder):
+        self.data = {}
+        self.scale = 1
 
         with open(folder + '/datasets.json', 'r') as file:
             # Iterate over every line (which is a json object)
@@ -13,11 +13,10 @@ class Dataset:
                 parsed = json.loads(line)
 
                 # Add this to the dataset
-                ret[parsed['id']] = parsed['size']
+                self.data[parsed['id']] = parsed['size']
 
-        return ret
+    def scale_datasets(self, val):
+        self.scale = val
 
-    @staticmethod
-    def scale_datasets(datasets, val):
-        for d in datasets:
-            datasets[d] = datasets[d]*val
+    def get_size(self, dataset_id):
+        return self.data[dataset_id]
