@@ -43,6 +43,8 @@ def p2p_analysis(queue, ses):
             qbox = job[2]
             data_id = job[3]
 
+            total = total + 1
+
             if qbox in dataset_loc[data_id]:
                 continue
 
