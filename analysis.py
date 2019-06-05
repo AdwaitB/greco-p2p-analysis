@@ -19,6 +19,8 @@ def p2p_analysis(queue, ses):
     total_time = 0
     average_time = 0
 
+    total = 0
+
     # Stores the location of the datasets in the system
     dataset_loc = ses[1].get_dataset_locs()
 
@@ -76,7 +78,7 @@ def p2p_analysis(queue, ses):
             total_size += ses[1].get_size(data_id)
             total_time += ses[0].get_time_for_link_transfer((src, qbox), ses[1].get_size(data_id))
 
-    return (total_size, total_time, average_time), traces
+    return (total_size, total_time, average_time/total), traces
 
 
 def worst_case_analysis(queue, ses):
@@ -91,6 +93,8 @@ def worst_case_analysis(queue, ses):
     total_size = 0
     total_time = 0
     average_time = 0
+
+    total = 0
 
     traces = []
 
@@ -111,6 +115,8 @@ def worst_case_analysis(queue, ses):
             qbox = job[2]
             data_id = job[3]
 
+            total = total + 1
+
             # Transfer from that link
             pop_entry = links[('ceph', qbox)].add_transfer(data_id, job[0])
 
@@ -120,4 +126,4 @@ def worst_case_analysis(queue, ses):
             total_size += ses[1].get_size(data_id)
             total_time += ses[0].get_time_for_link_transfer(('ceph', qbox), ses[1].get_size(data_id))
 
-    return (total_size, total_time, average_time), traces
+    return (total_size, total_time, average_time/total), traces
