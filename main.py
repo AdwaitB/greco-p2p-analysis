@@ -156,6 +156,7 @@ def main():
                                'transfer_size_worst', 'transfer_time_worst',
                                'transfer_size_opt', 'transfer_time_opt',
                                'transfer_size_improvement', 'transfer_time_improvement'])
+
     for index in DATA_FOLDERS:
         data = DATA_FOLDERS[index]
 
@@ -198,7 +199,11 @@ def main():
                 }
 
                 df = df.append(entry, ignore_index=True)
-    df.to_csv('output.csv')
+            print("")
+        print("")
+    df.to_csv('output_traces/output_{}--{}-{}-{}.csv'.format(
+        LATENCY_P2P_LOCAL, BW_P2P_NOT_LOCAL, get_str(JOBS_SCALE), get_str(DATA_SIZE_SCALING)
+    ))
 
 
 main()

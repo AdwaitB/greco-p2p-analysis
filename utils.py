@@ -8,3 +8,10 @@ def write_data(datasets, folder, name):
 
 def get_percent(a, b):
     return (a - b)*100/a
+
+
+def get_str(l):
+    ret = ""
+    for e in l:
+        ret += '-' + str(e)
+    return ret

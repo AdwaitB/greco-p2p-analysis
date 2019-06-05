@@ -23,5 +23,5 @@ So it is implemented in the 2nd way
 """
 LATENCY_P2P_LOCAL = 0.3
 BW_P2P_NOT_LOCAL = 0.5
-JOBS_SCALE = (2, 3, 4, 5, 6, 7, 8, 9, 10)
-DATA_SIZE_SCALING = (32, 64, 128, 256, 512)
+JOBS_SCALE = (5, 6, 7, 8, 9, 10)
+DATA_SIZE_SCALING = (64, 128, 256, 512)
