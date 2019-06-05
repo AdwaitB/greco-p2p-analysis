@@ -97,12 +97,12 @@ class Infra:
             return 0
 
         if self.qbox_loc[link[0]] == self.qbox_loc[link[1]]:
-            bw = self.mean_wan_bw
+            bw = self.mean_wan_bw*BW_P2p_LOCAL
             lat = self.mean_wan_lat*LATENCY_P2P_LOCAL
             return lat + ((size*overload)/(bw*self.mb))
         else:
             bw = self.mean_wan_bw*BW_P2P_NOT_LOCAL
-            lat = self.mean_wan_lat
+            lat = self.mean_wan_lat*LATENCY_P2P_NOT_LOCAL
             return lat + ((size*overload)/(bw*self.mb))
         pass
 
