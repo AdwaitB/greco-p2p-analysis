@@ -7,7 +7,8 @@ class Heap:
         heapify(self.heap)
 
     def push(self, element):
-        heappush(self.heap, element)
+        if element is not None:
+            heappush(self.heap, element)
 
     def pop(self):
         return heappop(self.heap)

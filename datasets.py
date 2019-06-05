@@ -4,6 +4,7 @@ import numpy as np
 
 class Dataset:
     def __init__(self, folder):
+        np.random.seed(1)
         self.data = {}
         self.scale = 1
 

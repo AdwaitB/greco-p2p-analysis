@@ -32,7 +32,7 @@ class Infra:
                 for qmobo in qrad['qmobos']:
                     self.qmobo_to_qbox[qmobo] = qbox["id"]
 
-        # Extract ceph latencies
+        # Extract ceph bw, latencies
         self.ceph_net = {}
 
         # Extract qbox locations
@@ -68,7 +68,25 @@ class Infra:
         self.mean_wan_bw = self.mean_wan_bw/len(self.ceph_net)
         self.mean_wan_lat = self.mean_wan_lat/len(self.ceph_net)
 
-        # TODO: Implement seperate latencies for every site
+    def get_network_for_link(self, link):
+        """
+        Get the bandwidth and the latency for the link
+        :param link: qbox1, qbox2
+        :return: bandwidth, latency of the link
+        """
+        if link[0] == link[1]:
+            return 100000000000, 0
+        elif link[0] == 'ceph':
+            return self.ceph_net[link[1]]
+        elif self.qbox_loc[link[0]] == self.qbox_loc[link[1]]:
+            bw = self.mean_wan_bw*BW_P2P_LOCAL
+            lat = self.mean_wan_lat*LATENCY_P2P_LOCAL
+            return bw, lat
+        else:
+            bw = self.mean_wan_bw*BW_P2P_NOT_LOCAL
+            lat = self.mean_wan_lat*LATENCY_P2P_NOT_LOCAL
+            return bw, lat
+        pass
 
     def get_qbox_by_mobo_id(self, mobo_id):
         if mobo_id not in self.id_to_mobos:
@@ -84,7 +102,7 @@ class Infra:
         speed, lat = self.ceph_net[qbox]
         return lat + (size/(speed*self.mb))
 
-    def get_time_for_p2p_transfer(self, link, size, overload=1):
+    def get_time_for_link_transfer(self, link, size, overload=1):
         """
         Gets the time required for p2p transfer fro qbox1 to qbox2
         Return 0 if the qbox are same
@@ -95,22 +113,35 @@ class Infra:
         """
         if link[0] == link[1]:
             return 0
-
-        if self.qbox_loc[link[0]] == self.qbox_loc[link[1]]:
-            bw = self.mean_wan_bw*BW_P2p_LOCAL
-            lat = self.mean_wan_lat*LATENCY_P2P_LOCAL
-            return lat + ((size*overload)/(bw*self.mb))
         else:
-            bw = self.mean_wan_bw*BW_P2P_NOT_LOCAL
-            lat = self.mean_wan_lat*LATENCY_P2P_NOT_LOCAL
+            bw, lat = self.get_network_for_link(link)
             return lat + ((size*overload)/(bw*self.mb))
-        pass
 
-    def get_links(self, datasets):
+    def get_size_for_link_time(self, link, time, overload=1):
+        """
+        Gets the size consumed for a link in the time for a single transfer among the overloaded
+        :param link: (qbox1, qbox2)
+        :param time: time of transfer
+        :param overload: amount of parallel transfers on that link
+        :return: size consumed
+        """
+        if link[0] == link[1]:
+            return 100000000000000
+        else:
+            bw = self.get_network_for_link(link)[0]
+            return bw*time/overload
+
+    def get_p2p_mesh(self, datasets):
         links = {}
         for qbox1 in self.qboxes:
             for qbox2 in self.qboxes:
                 links[(qbox1, qbox2)] = Link(self, datasets, (qbox1, qbox2))
+        return links
+
+    def get_ceph_network(self, datasets):
+        links = {}
+        for qbox in self.qboxes:
+            links[('ceph', qbox)] = Link(self, datasets, ('ceph', qbox))
         return links
 
     def get_random_qbox(self):
