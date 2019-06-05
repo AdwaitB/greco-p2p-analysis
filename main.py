@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from datasets import *
 from utils import *
 from workload import *
@@ -162,20 +164,26 @@ def main():
         for job_scale in JOBS_SCALE:
             for data_scale in DATA_SIZE_SCALING:
 
+                print(str(job_scale) + ' ' + str(data_scale) + ' ', end='')
                 session = init(data)
+                print("=", end='')
 
                 # Add random datasets to jobs
                 session[2].add_random_datasets_to_job(session[1], job_scale)
+                print("=", end='')
 
                 # Clean the entries for cached datasets
                 data_staging_clean = get_clean_data_staging_jobs(session, data)
+                print("=", end='')
 
                 # Scale the datasets
                 session[1].scale_datasets(data_scale)
+                print("=", end='')
 
                 # Get the worst_case and the p2p execution
                 worst_case = worst_case_analysis(data_staging_clean, session)
                 p2p, traces = p2p_analysis(data_staging_clean, session)
+                print("=")
 
                 entry = {
                     'data' : data,

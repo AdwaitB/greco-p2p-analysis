@@ -29,4 +29,4 @@ class Dataset:
         return ret
 
     def get_n_random_datasets(self, n):
-        return np.random.choice(list(self.data.keys()), n)
+        return list(np.random.choice(list(self.data.keys()), n))

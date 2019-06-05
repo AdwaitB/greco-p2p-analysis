@@ -28,8 +28,9 @@ class Workload:
             self.raw_workloads[job_id]['datasets'] = input_file['profiles'][job['profile']]['datasets']
 
     def add_random_datasets_to_job(self, dataset, count):
+        data_ids = dataset.get_n_random_datasets(len(self.raw_workloads)*count)
+        index = 0
+
         for job_id in self.raw_workloads:
-            data_ids = dataset.get_n_random_datasets(count)
-            for data_id in data_ids:
-                if data_id not in self.raw_workloads[job_id]:
-                    self.raw_workloads[job_id]['datasets'].append(data_id)
+            self.raw_workloads[job_id]['datasets'] += data_ids[index: index + count]
+            index = index + count
