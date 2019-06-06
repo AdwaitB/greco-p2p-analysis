@@ -1,0 +1,91 @@
+{
+    "nb_res": 1,
+    "jobs": [
+        {
+            "id": "QJOB-0503-0204-c8cc-420ea75de053_0",
+            "subtime": 240,
+            "res": 1,
+            "profile": "QJOB-0503-0204-c8cc-420ea75de053_0_profile",
+            "real_allocation": 601,
+            "real_start_time": 293,
+            "real_finish_time": 442,
+            "real_avg_speed": 1900
+        },
+        {
+            "id": "QJOB-0503-0204-cc29-2a8ec6d8461c_0",
+            "subtime": 240,
+            "res": 1,
+            "profile": "QJOB-0503-0204-cc29-2a8ec6d8461c_0_profile",
+            "real_allocation": 601,
+            "real_start_time": 294,
+            "real_finish_time": 444,
+            "real_avg_speed": 875
+        },
+        {
+            "id": "QJOB-0503-0204-d833-84d6aa11b5e5_0",
+            "subtime": 240,
+            "res": 1,
+            "profile": "QJOB-0503-0204-d833-84d6aa11b5e5_0_profile",
+            "real_allocation": 601,
+            "real_start_time": 298,
+            "real_finish_time": 455,
+            "real_avg_speed": 3000
+        },
+        {
+            "id": "QJOB-0503-0204-cf55-e948fb3fe1e6_0",
+            "subtime": 240,
+            "res": 1,
+            "profile": "QJOB-0503-0204-cf55-e948fb3fe1e6_0_profile",
+            "real_allocation": 601,
+            "real_start_time": 295,
+            "real_finish_time": 456,
+            "real_avg_speed": 2644.4444444444443
+        }
+    ],
+    "profiles": {
+        "QJOB-0503-0204-c8cc-420ea75de053_0_profile": {
+            "type": "parallel_homogeneous",
+            "cpu": 3800,
+            "com": 0,
+            "user": "unknown-user",
+            "priority": -5,
+            "datasets": [
+                "bc0647bd70ce33c64470a0c5d06d63737a25a0934baa34d846afce140a90224e",
+                "5fac47d1c6dd017255137fd5b5d1851d9cf95e2fb3335183b333b1f1e78b0dae"
+            ]
+        },
+        "QJOB-0503-0204-cc29-2a8ec6d8461c_0_profile": {
+            "type": "parallel_homogeneous",
+            "cpu": 3500,
+            "com": 0,
+            "user": "unknown-user",
+            "priority": -5,
+            "datasets": [
+                "bc0647bd70ce33c64470a0c5d06d63737a25a0934baa34d846afce140a90224e",
+                "bb8d1212035eaf00c84112073fa82aae044c5b90d3c6bbfa83f58cf7922f089a"
+            ]
+        },
+        "QJOB-0503-0204-d833-84d6aa11b5e5_0_profile": {
+            "type": "parallel_homogeneous",
+            "cpu": 27000,
+            "com": 0,
+            "user": "unknown-user",
+            "priority": -5,
+            "datasets": [
+                "bc0647bd70ce33c64470a0c5d06d63737a25a0934baa34d846afce140a90224e",
+                "5a78a83a1e6ab242e1c7328bb2d1aed2f188aadbc38ed1a1b0179d0a154aeec0"
+            ]
+        },
+        "QJOB-0503-0204-cf55-e948fb3fe1e6_0_profile": {
+            "type": "parallel_homogeneous",
+            "cpu": 23800,
+            "com": 0,
+            "user": "unknown-user",
+            "priority": -5,
+            "datasets": [
+                "bc0647bd70ce33c64470a0c5d06d63737a25a0934baa34d846afce140a90224e",
+                "f0899efce007171250169337e45a4412e4dfe6b551ae6912942f188871e227e6"
+            ]
+        }
+    }
+}
