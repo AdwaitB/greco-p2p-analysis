@@ -1,4 +1,5 @@
 DATA_FOLDERS = {
+    #-1: 'data/test',
     0: 'data/3d_09-05-2019',
     1: 'data/1w_03-05-2019',
     2: 'data/1w_10-05-2019',
@@ -22,9 +23,9 @@ But the time taken for this and the time taken for stacked, but independent quer
 So it is implemented in the 2nd way
 """
 
-LATENCY_P2P_LOCAL = 0.3
-LATENCY_P2P_NOT_LOCAL = 1
-BW_P2P_LOCAL = 0.8
+LATENCY_P2P_LOCAL = 0
+LATENCY_P2P_NOT_LOCAL = 0
+BW_P2P_LOCAL = 0.5
 BW_P2P_NOT_LOCAL = 0.5
-JOBS_SCALE = (5, 6, 7, 8, 9, 10)
-DATA_SIZE_SCALING = (64, 128, 256, 512)
+JOBS_SCALE = (0, 1, 5, 6, 7)
+DATA_SIZE_SCALING = (64, 512)

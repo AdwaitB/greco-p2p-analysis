@@ -35,8 +35,9 @@ def p2p_analysis(queue, ses):
         if job[4] == 'POP':
             pop_entry, history = links[(job[2], job[3])].complete_transfer(job)
 
-            if pop_entry is not None:
-                jobs.push(pop_entry)
+            if history is not None:
+                if pop_entry is not None:
+                    jobs.push(pop_entry)
                 average_time += history[1]
         # For REQ type, check if dataset is present in system or not
         else:
@@ -109,8 +110,9 @@ def worst_case_analysis(queue, ses):
         if job[4] == 'POP':
             pop_entry, history = links[(job[2], job[3])].complete_transfer(job)
 
-            if pop_entry is not None:
-                jobs.push(pop_entry)
+            if history is not None:
+                if pop_entry is not None:
+                    jobs.push(pop_entry)
                 average_time += history[1]
         # For REQ type, check if dataset is present in system or not
         else:

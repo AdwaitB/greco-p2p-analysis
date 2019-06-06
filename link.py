@@ -36,7 +36,7 @@ class Link:
 
         # Second element is random to prevent colisions
         return min_data_time + self.clock, randint(0, 1000000000), self.link[0], \
-               self.link[1], 'POP', min_data_entry, self.clock
+                self.link[1], 'POP', min_data_entry, self.clock
 
     def update(self, time):
         """
@@ -45,8 +45,10 @@ class Link:
         :return: 0, if update failed (self.clock is more than this or get_min returned more than time) else 1
         """
         if len(self.transfers) == 0:
+            self.clock = time
             return 0
         if self.get_min()[0] < time or self.clock > time:
+            self.clock = time
             return 0
 
         diff = self.clock - time
@@ -80,6 +82,11 @@ class Link:
             del self.transfers[data_id]
             del self.incoming[data_id]
 
+            # print("Duration : {}, Quantity : {}, Src : {}, Dest : {}".format(
+            #     total_time, self.dataset.get_size(job[5])/1000000000, job[2], job[3]
+            # ))
+            # print(str(total_time) + " " + str(job))
+
             # Return next min
             return self.get_min(), (data_id, total_time)
 
@@ -100,6 +107,13 @@ class Link:
         self.transfers[data_id] = self.dataset.get_size(data_id)
         self.incoming[data_id] = now
 
+        # print("ADD: time: {}, size: {}, min_end: {}, data_id: {}, expected_duration: {}, calculated_duration: {}, transfers: {}, src: {}, dest: {}, bw: {}".format(
+        #     now, self.dataset.get_size(data_id)/1000000000, self.get_min()[0], data_id,
+        #     self.dataset.get_size(data_id)/(self.infra.get_network_for_link(self.link)[0]*1000000),
+        #     self.infra.get_time_for_link_transfer(self.link, self.dataset.get_size(data_id), len(self.transfers)),
+        #     len(self.transfers),
+        #     self.link[0], self.link[1], self.infra.get_network_for_link(self.link)[0]
+        # ))
         return self.get_min()
 
     def get_bandwidth(self):

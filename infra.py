@@ -97,11 +97,6 @@ class Infra:
             return -1
         return self.qmobo_to_qbox[qmobo]
 
-    def get_time_for_ceph_transfer(self, qbox, size):
-        # Size is in Bytes
-        speed, lat = self.ceph_net[qbox]
-        return lat + (size/(speed*self.mb))
-
     def get_time_for_link_transfer(self, link, size, overload=1):
         """
         Gets the time required for p2p transfer fro qbox1 to qbox2
@@ -115,7 +110,7 @@ class Infra:
             return 0
         else:
             bw, lat = self.get_network_for_link(link)
-            return lat + ((size*overload)/(bw*self.mb))
+            return (size*overload)/(bw*self.mb)
 
     def get_size_for_link_time(self, link, time, overload=1):
         """

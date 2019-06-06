@@ -4,10 +4,8 @@ from datasets import *
 from utils import *
 from workload import *
 from infra import *
-from heap import *
 from analysis import *
 
-from random import seed as rs
 from copy import deepcopy
 
 import pandas as pd
@@ -39,7 +37,7 @@ def get_clean_data_staging_jobs(s, folder):
 
         for data_id in job['datasets']:
             # Datasets are not scaled here
-            time = job['start'] - infra.get_time_for_ceph_transfer(job['qbox'], datasets.get_size(data_id))
+            time = job['start'] - infra.get_time_for_link_transfer(('ceph', job['qbox']), datasets.get_size(data_id))
 
             data_staging.push((time, count, job['qbox'], data_id))
 
@@ -87,6 +85,7 @@ def main():
             for data_scale in DATA_SIZE_SCALING:
 
                 print(str(job_scale) + ' ' + str(data_scale), end=' ')
+
                 session = init(data)
                 print("=", end='')
 

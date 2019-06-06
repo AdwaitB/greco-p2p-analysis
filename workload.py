@@ -8,7 +8,11 @@ class Workload:
 
         self.raw_workloads = {}
 
+        index = 0
         for job in input_file["jobs"]:
+            if index == 2:
+                break
+            index += 1
             job_id = job["id"]
 
             # Check if data is valid
@@ -28,6 +32,9 @@ class Workload:
             self.raw_workloads[job_id]['datasets'] = input_file['profiles'][job['profile']]['datasets']
 
     def add_random_datasets_to_job(self, dataset, count):
+        if count == 0:
+            return
+
         data_ids = dataset.get_n_random_datasets(len(self.raw_workloads)*count)
         index = 0
 
