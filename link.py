@@ -66,6 +66,8 @@ class Link:
         :param job: the job as pushed inside the heap
         :return: a pop job for minimum time and the data_id, time_required to complete
         """
+        if job[5] not in self.transfers:
+            return None, None
         # Stale entry, ignore it
         if job[6] < self.clock:
             return None, None

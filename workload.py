@@ -8,11 +8,7 @@ class Workload:
 
         self.raw_workloads = {}
 
-        index = 0
         for job in input_file["jobs"]:
-            if index == 2:
-                break
-            index += 1
             job_id = job["id"]
 
             # Check if data is valid

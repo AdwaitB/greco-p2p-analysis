@@ -8,6 +8,9 @@ from analysis import *
 
 from copy import deepcopy
 
+import matplotlib
+import matplotlib.pyplot as plt
+
 import pandas as pd
 
 
@@ -71,6 +74,9 @@ def get_clean_data_staging_jobs(s, folder):
 
 
 def main():
+    worst_case_list = []
+    p2p_list = []
+
     df = pd.DataFrame(columns=['data', 'job_scaling', 'data_scaling',
                                'transfer_size_worst', 'transfer_time_worst', 'transfer_size_improvement'
                                'transfer_size_p2p', 'transfer_time_p2p', 'transfer_time_improvement'
@@ -107,9 +113,14 @@ def main():
 
                 p2p, traces = p2p_analysis(data_staging_clean, session)
 
+                worst_case_list.append(worst_case[2])
+                p2p_list.append(p2p[2])
+
                 print(get_percent(worst_case[0], p2p[0]), end=' ')
                 print(get_percent(worst_case[1], p2p[1]), end=' ')
-                print(get_percent(worst_case[2], p2p[2]))
+                print(get_percent(worst_case[2], p2p[2]), end=' ')
+
+                print(": {} {}".format(worst_case[2], p2p[2]))
 
                 entry = {
                     'data': data,
@@ -129,10 +140,23 @@ def main():
                 df = df.append(entry, ignore_index=True)
             print("")
         print("")
+
+    draw_graph(worst_case_list, p2p_list)
+
     df.to_csv('output_traces/output_{}={}={}={}={}={}.csv'.format(
         BW_P2P_LOCAL, BW_P2P_NOT_LOCAL, LATENCY_P2P_LOCAL, LATENCY_P2P_NOT_LOCAL,
         get_str(JOBS_SCALE), get_str(DATA_SIZE_SCALING)
     ))
+
+
+def draw_graph(worst_case_list, p2p_list):
+    plt.figure(figsize=(12, 8))
+    plt.plot(DATA_SIZE_SCALING, worst_case_list, label='Centralized (CEPH)')
+    plt.plot(DATA_SIZE_SCALING, p2p_list, label='P2P')
+    plt.legend()
+    plt.xlabel("Data Size Scaling Factor")
+    plt.ylabel("Average Time for Data Transfer")
+    plt.show()
 
 
 main()
