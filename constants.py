@@ -1,9 +1,12 @@
+import numpy as np
+
+
 DATA_FOLDERS = {
-    #-1: 'data/test',
-    0: 'data/3d_09-05-2019',
-    1: 'data/1w_03-05-2019',
-    2: 'data/1w_10-05-2019',
-    3: 'data/1w_17-05-2019',
+    # -1: 'data/test',
+    # 0: 'data/3d_09-05-2019',
+    # 1: 'data/1w_03-05-2019',
+    # 2: 'data/1w_10-05-2019',
+    # 3: 'data/1w_17-05-2019',
     4: 'data/2w_01-05-2019'
 }
 
@@ -25,7 +28,7 @@ So it is implemented in the 2nd way
 
 LATENCY_P2P_LOCAL = 0
 LATENCY_P2P_NOT_LOCAL = 0
-BW_P2P_LOCAL = 0.5
-BW_P2P_NOT_LOCAL = 0.5
-JOBS_SCALE = (0, 1, 5, 6, 7)
-DATA_SIZE_SCALING = (64, 512)
+BW_P2P_LOCAL = 0.7
+BW_P2P_NOT_LOCAL = 0.7
+JOBS_SCALE = (0, )
+DATA_SIZE_SCALING = list(range(10, 500, 10))
