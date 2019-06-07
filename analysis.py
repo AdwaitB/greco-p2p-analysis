@@ -81,7 +81,7 @@ def p2p_analysis(queue, ses):
             total_size += ses[1].get_size(data_id)
             total_time += ses[0].get_time_for_link_transfer((src, qbox), ses[1].get_size(data_id))
 
-    return (total_size, total_time, average_time/total), traces
+    return (total_size, total_time, average_time/total, total_size/total), traces
 
 
 def worst_case_analysis(queue, ses):
@@ -130,4 +130,4 @@ def worst_case_analysis(queue, ses):
             total_size += ses[1].get_size(data_id)
             total_time += ses[0].get_time_for_link_transfer(('ceph', qbox), ses[1].get_size(data_id))
 
-    return (total_size, total_time, average_time/total), traces
+    return (total_size, total_time, average_time/total, total_size/total), traces

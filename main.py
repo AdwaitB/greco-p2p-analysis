@@ -8,7 +8,6 @@ from analysis import *
 
 from copy import deepcopy
 
-import matplotlib
 import matplotlib.pyplot as plt
 
 import pandas as pd
@@ -73,90 +72,102 @@ def get_clean_data_staging_jobs(s, folder):
     return data_staging
 
 
-def main():
+def main(data_index):
     worst_case_list = []
     p2p_list = []
+    average_size_list = []
 
     df = pd.DataFrame(columns=['data', 'job_scaling', 'data_scaling',
                                'transfer_size_worst', 'transfer_time_worst', 'transfer_size_improvement'
                                'transfer_size_p2p', 'transfer_time_p2p', 'transfer_time_improvement'
                                'average_time_worst', 'average_time_p2p', 'average_time_improvement'])
 
-    for index in DATA_FOLDERS:
-        data = DATA_FOLDERS[index]
+    data = DATA_FOLDERS[data_index]
 
-        print("{}".format(data))
+    print("{}".format(data))
 
-        for job_scale in JOBS_SCALE:
-            for data_scale in DATA_SIZE_SCALING:
+    for job_scale in JOBS_SCALE:
+        mean_bw = 0
 
-                print(str(job_scale) + ' ' + str(data_scale), end=' ')
+        for data_scale in DATA_SIZE_SCALING:
 
-                session = init(data)
-                print("=", end='')
+            print(str(job_scale) + ' ' + str(data_scale), end=' ')
 
-                # Add random datasets to jobs
-                session[2].add_random_datasets_to_job(session[1], job_scale)
-                print("=", end='')
+            session = init(data)
+            print("=", end='')
 
-                # Clean the entries for cached datasets
-                data_staging_clean = get_clean_data_staging_jobs(session, data)
-                print("=", end='')
+            mean_bw = session[0].mean_wan_bw
 
-                # Scale the datasets
-                session[1].scale_datasets(data_scale)
-                print("-", end='')
+            # Add random datasets to jobs
+            session[2].add_random_datasets_to_job(session[1], job_scale)
+            print("=", end='')
 
-                # Get the worst_case and the p2p execution
-                worst_case, traces = worst_case_analysis(data_staging_clean, session)
-                print("+", end=' : ')
+            # Clean the entries for cached datasets
+            data_staging_clean = get_clean_data_staging_jobs(session, data)
+            print("=", end='')
 
-                p2p, traces = p2p_analysis(data_staging_clean, session)
+            # Scale the datasets
+            session[1].scale_datasets(data_scale)
+            print("-", end='')
 
-                worst_case_list.append(worst_case[2])
-                p2p_list.append(p2p[2])
+            # Get the worst_case and the p2p execution
+            worst_case, traces = worst_case_analysis(data_staging_clean, session)
+            print("+", end=' : ')
 
-                print(get_percent(worst_case[0], p2p[0]), end=' ')
-                print(get_percent(worst_case[1], p2p[1]), end=' ')
-                print(get_percent(worst_case[2], p2p[2]), end=' ')
+            p2p, traces = p2p_analysis(data_staging_clean, session)
 
-                print(": {} {}".format(worst_case[2], p2p[2]))
+            worst_case_list.append(worst_case[2]/3600)
+            p2p_list.append(p2p[2]/3600)
+            average_size_list.append(p2p[3])
 
-                entry = {
-                    'data': data,
-                    'job_scaling': job_scale,
-                    'data_scaling': data_scale,
-                    'transfer_size_worst': worst_case[0],
-                    'transfer_size_p2p': p2p[0],
-                    'transfer_size_improvement': get_percent(worst_case[0], p2p[0]),
-                    'transfer_time_worst': worst_case[1],
-                    'transfer_time_p2p': p2p[1],
-                    'transfer_time_improvement': get_percent(worst_case[1], p2p[1]),
-                    'average_time_worst': worst_case[2],
-                    'average_time_p2p': p2p[2],
-                    'average_time_improvement': get_percent(worst_case[2], p2p[2])
-                }
+            print(get_percent(worst_case[0], p2p[0]), end=' ')
+            print(get_percent(worst_case[1], p2p[1]), end=' ')
+            print(get_percent(worst_case[2], p2p[2]), end=' ')
 
-                df = df.append(entry, ignore_index=True)
-            print("")
+            print(": {} {}".format(worst_case[2], p2p[2]))
+
+            entry = {
+                'data': data,
+                'job_scaling': job_scale,
+                'data_scaling': data_scale,
+                'transfer_size_worst': worst_case[0],
+                'transfer_size_p2p': p2p[0],
+                'transfer_size_improvement': get_percent(worst_case[0], p2p[0]),
+                'transfer_time_worst': worst_case[1],
+                'transfer_time_p2p': p2p[1],
+                'transfer_time_improvement': get_percent(worst_case[1], p2p[1]),
+                'average_time_worst': worst_case[2],
+                'average_time_p2p': p2p[2],
+                'average_time_improvement': get_percent(worst_case[2], p2p[2])
+            }
+            df = df.append(entry, ignore_index=True)
+
+        save_graph(
+            worst_case_list, p2p_list, average_size_list, BW_P2P_LOCAL * mean_bw,
+            "{}-{}".format(BW_P2P_NOT_LOCAL, get_str(DATA_SIZE_SCALING_PARAMS))
+        )
         print("")
+    print("")
 
-    draw_graph(worst_case_list, p2p_list)
-
-    df.to_csv('output_traces/output_{}={}={}={}={}={}.csv'.format(
-        BW_P2P_LOCAL, BW_P2P_NOT_LOCAL, LATENCY_P2P_LOCAL, LATENCY_P2P_NOT_LOCAL,
-        get_str(JOBS_SCALE), get_str(DATA_SIZE_SCALING)
+    df.to_csv('output_traces/output_{}{}.csv'.format(
+        BW_P2P_NOT_LOCAL, get_str(DATA_SIZE_SCALING)
     ))
 
 
-def draw_graph(worst_case_list, p2p_list):
+def save_graph(worst_case_list, p2p_list, average_size, bandwidth, file_name):
+    average_size_mb = [x/1000000000 for x in average_size]
+
     plt.figure(figsize=(12, 8))
-    plt.plot(DATA_SIZE_SCALING, worst_case_list, label='Centralized (CEPH)')
-    plt.plot(DATA_SIZE_SCALING, p2p_list, label='P2P')
+    # plt.plot(DATA_SIZE_SCALING, worst_case_list, label='Centralized (CEPH)')
+    # plt.plot(DATA_SIZE_SCALING, p2p_list, label='P2P')
+    plt.plot(np.log10(average_size_mb), worst_case_list, label='Centralized (CEPH)')
+    plt.plot(np.log10(average_size_mb), p2p_list, label='P2P')
     plt.legend()
-    plt.xlabel("Data Size Scaling Factor")
-    plt.ylabel("Average Time for Data Transfer")
-    plt.show()
+    plt.grid(True)
+    plt.xlabel("Log10 of Average Data Size (GB)")
+    plt.ylabel("Average Time for Data Transfer (hours)")
+    plt.title("Non-Local P2P Bandwidth (Mbps): {}".format(bandwidth*8))
+    plt.savefig('figures/' + file_name + ".png")
 
 
-main()
+main(4)
