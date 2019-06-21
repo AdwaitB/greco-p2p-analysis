@@ -13,5 +13,5 @@ def get_percent(a, b):
 def get_str(l):
     ret = ""
     for e in l:
-        ret += '-' + str(e)
+        ret += '_' + str(e)
     return ret

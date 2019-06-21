@@ -143,8 +143,8 @@ def main(data_index):
             df = df.append(entry, ignore_index=True)
 
         save_graph(
-            worst_case_list, p2p_list, average_size_list, BW_P2P_LOCAL * mean_bw,
-            "{}-{}".format(BW_P2P_NOT_LOCAL, get_str(DATA_SIZE_SCALING_PARAMS))
+            worst_case_list, p2p_list, average_size_list, BW_P2P_NOT_LOCAL * mean_bw,
+            "{}{}".format(BW_P2P_NOT_LOCAL, get_str(DATA_SIZE_SCALING_PARAMS))
         )
         print("")
     print("")

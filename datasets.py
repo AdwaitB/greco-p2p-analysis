@@ -4,7 +4,6 @@ import numpy as np
 
 class Dataset:
     def __init__(self, folder):
-        np.random.seed(1)
         self.data = {}
         self.scale = 1
 
@@ -30,4 +29,5 @@ class Dataset:
         return ret
 
     def get_n_random_datasets(self, n):
+        np.random.seed(1)
         return list(np.random.choice(list(self.data.keys()), n))
